@@ -13,6 +13,7 @@ export type WalletState = {
   connected: boolean;
   address: string | null;
   network: string | null;
+  isDemo?: boolean;
 };
 
 export async function isFreighterInstalled(): Promise<boolean> {

@@ -76,8 +76,9 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const connectDemo = useCallback(() => {
     setWallet({
       connected: true,
-      address: "GB3XPHAPMYBNFPQIUEG46SN5LCKHMSIT2NCICWCJJUSWISQU674GTSIU",
+      address: "GBBW2CTAEIFCCDNYEDJRHM3TX5FWNQQG3WSFKEQYP7T53CIDEXC2UBEX",
       network: "TESTNET",
+      isDemo: true,
     });
     setError(null);
   }, []);

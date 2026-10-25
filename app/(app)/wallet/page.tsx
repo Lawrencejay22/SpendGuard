@@ -2,7 +2,20 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Plus, Banknote, CreditCard, Smartphone, Building2, Zap, ArrowDownToLine } from "lucide-react";
+import {
+  Plus,
+  Banknote,
+  CreditCard,
+  Smartphone,
+  Building2,
+  Zap,
+  ArrowDownToLine,
+  ShieldAlert,
+  PiggyBank,
+  CheckCircle,
+} from "lucide-react";
+import { WalletBanner } from "@/components/wallet-banner";
+import { WalletBalances } from "@/components/wallet-balances";
 
 interface LedgerItem {
   ref: string;
@@ -73,6 +86,32 @@ export default function WalletPage() {
           setBalancePhp(data.wallet.phpBalance || 10000);
           setReservedPhp(data.wallet.reservedPhp || 0);
         }
+        if (data.ledgers && Array.isArray(data.ledgers) && data.ledgers.length > 0) {
+          const mapped: LedgerItem[] = data.ledgers.map((l: {
+            ref: string;
+            date: string;
+            type: string;
+            recipient?: string;
+            purpose?: string;
+            debitPhp?: number;
+            creditPhp?: number;
+            status?: string;
+          }) => ({
+            ref: l.ref,
+            date: new Date(l.date).toLocaleDateString("en-PH", {
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            type: l.type === "DEPOSIT" ? "Deposit" : l.type === "CASHOUT" ? "Cash-out" : "Payment",
+            acct: l.type === "DEPOSIT" ? `${l.recipient || "Funding"} → Wallet` : `Wallet → ${l.recipient || "Merchant"}`,
+            db: l.debitPhp || 0,
+            cr: l.creditPhp || 0,
+            st: l.status || "completed",
+          }));
+          setLedger(mapped);
+        }
       })
       .catch(() => {});
   }, []);
@@ -81,8 +120,16 @@ export default function WalletPage() {
     <div className="space-y-4">
       <div>
         <h1 className="text-2xl lg:text-3xl font-bold">Wallet</h1>
-        <p className="text-stext text-sm mt-1">Your controlled account balance and double-entry ledger overview.</p>
+        <p className="text-stext text-sm mt-1">
+          Your controlled account balance, Paiflow on-chain settlement, and double-entry ledger overview.
+        </p>
       </div>
+
+      {/* Stellar & Freighter Wallet Connection Banner */}
+      <WalletBanner />
+
+      {/* Live Stellar XLM + USDC Balances with 10s Poller */}
+      <WalletBalances />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Main Balance Card */}
@@ -124,6 +171,9 @@ export default function WalletPage() {
             </Link>
             <Link href="/payments" className="btn btn-ghost text-xs">
               <CreditCard size={14} /> Pay
+            </Link>
+            <Link href="/emergency" className="btn btn-danger text-xs">
+              <ShieldAlert size={14} /> Emergency Mode
             </Link>
           </div>
         </div>

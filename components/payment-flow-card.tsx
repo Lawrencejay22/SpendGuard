@@ -84,20 +84,36 @@ export function PaymentFlowCard({ onPaymentSuccess }: PaymentFlowCardProps = {})
       }
       const prep = await prepResp.json();
 
-      // Step 2: Sign in the browser via Freighter
+      // Step 2: Sign transaction
       setStep(2);
       let signedXdr: string;
-      try {
-        signedXdr = await signWithFreighter(
-          prep.unsignedXdr,
-          prep.networkPassphrase || "Test SDF Network ; September 2015"
-        );
-      } catch (signErr: unknown) {
-        // Fallback for simulation testing when extension window is rejected or absent
-        if (prep.isSimulated || process.env.NODE_ENV === "development") {
-          signedXdr = prep.unsignedXdr;
-        } else {
-          throw signErr;
+      if (wallet.isDemo || customerAddress === "GBBW2CTAEIFCCDNYEDJRHM3TX5FWNQQG3WSFKEQYP7T53CIDEXC2UBEX") {
+        const signResp = await fetch("/api/wallet/demo-sign", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            unsignedXdr: prep.unsignedXdr,
+            networkPassphrase: prep.networkPassphrase || "Test SDF Network ; September 2015",
+          }),
+        });
+        const signJson = await signResp.json();
+        if (!signResp.ok || !signJson.signedXdr) {
+          throw new Error(signJson.error || "Failed to sign demo transaction");
+        }
+        signedXdr = signJson.signedXdr;
+      } else {
+        try {
+          signedXdr = await signWithFreighter(
+            prep.unsignedXdr,
+            prep.networkPassphrase || "Test SDF Network ; September 2015"
+          );
+        } catch (signErr: unknown) {
+          // Fallback for simulation testing when extension window is rejected or absent
+          if (prep.isSimulated || process.env.NODE_ENV === "development") {
+            signedXdr = prep.unsignedXdr;
+          } else {
+            throw signErr;
+          }
         }
       }
 
