@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String                @id @default(cuid())
+  email          String                @unique
+  passwordHash   String
+  fullName       String
+  mobile         String
+  birthdate      DateTime
+  gender         String
+  role           Role                  @default(CUSTOMER)
+  stellarAddress String?
+  createdAt      DateTime              @default(now())
+  sessions       Session[]
+  verification   IdentityVerification?
+  wallet         WalletAccount?
+  spendingPolicy SpendingPolicy?
+  orders         Order[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model IdentityVerification {
+  id             String             @id @default(cuid())
+  userId         String             @unique
+  user           User               @relation(fields: [userId], references: [id])
+  idType         String
+  selfieUrl      String?
+  idFrontUrl     String?
+  idBackUrl      String?
+  livenessOk     Boolean            @default(true)
+  status         VerificationStatus @default(PENDING)
+  reviewerId     String?
+  decision       String?
+  decisionReason String?
+  submittedAt    DateTime           @default(now())
+  reviewedAt     DateTime?
+}
+
+model WalletAccount {
+  id              String        @id @default(cuid())
+  userId          String        @unique
+  user            User          @relation(fields: [userId], references: [id])
+  phpBalanceCents BigInt        @default(1000000)
+  reservedCents   BigInt        @default(0)
+  pendingCents    BigInt        @default(0)
+  ledgerEntries   LedgerEntry[]
+}
+
+model LedgerEntry {
+  id          String        @id @default(cuid())
+  walletId    String
+  wallet      WalletAccount @relation(fields: [walletId], references: [id])
+  type        LedgerType
+  debitCents  BigInt        @default(0)
+  creditCents BigInt        @default(0)
+  ref         String
+  createdAt   DateTime      @default(now())
+}
+
+model SpendingPolicy {
+  id                       String   @id @default(cuid())
+  userId                   String   @unique
+  user                     User     @relation(fields: [userId], references: [id])
+  dailyLimitCents          BigInt   @default(200000)
+  dailyCashoutLimitCents   BigInt   @default(100000)
+  weeklyLimitCents         BigInt   @default(1000000)
+  monthlyLimitCents        BigInt   @default(3000000)
+  perTransactionLimitCents BigInt   @default(100000)
+  timezone                 String   @default("Asia/Manila")
+  nighttimeBlocked         Boolean  @default(true)
+  require2faOverCents      BigInt   @default(50000)
+}
+
+model Order {
+  id                   String      @id @default(cuid())
+  userId               String
+  user                 User        @relation(fields: [userId], references: [id])
+  amountXlm            Decimal     @db.Decimal(20, 7)
+  asset                String      @default("XLM")
+  merchantAddress      String
+  savingsDestination   String      @default("savings")
+  preparedXdr          String?
+  preparationRequestId String?
+  networkPassphrase    String?
+  signedXdr            String?
+  txHash               String?
+  status               OrderStatus @default(DRAFT)
+  createdAt            DateTime    @default(now())
+  verifiedAt           DateTime?
+}
+
+enum Role {
+  CUSTOMER
+  MODERATOR
+  ADMIN
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  RESUBMIT
+}
+
+enum LedgerType {
+  DEPOSIT
+  PAYMENT
+  CASHOUT
+  FEE
+  REFUND
+  REVERSAL
+  ADJUSTMENT
+}
+
+enum OrderStatus {
+  DRAFT
+  PREPARED
+  SIGNED
+  SUBMITTING
+  PENDING
+  COMPLETED
+  FAILED
+}
