@@ -106,10 +106,12 @@ export default function AddMoneyPage() {
           </div>
 
           <h3 className="font-bold mb-4">2. Enter amount</h3>
-          <div className="relative mb-4">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-stext font-semibold">PHP</span>
+          <div className="flex items-center gap-2.5 input mb-4 px-4 py-3 focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20 transition-all">
+            <span className="text-stext font-semibold text-lg select-none flex-shrink-0 tracking-wide">
+              PHP
+            </span>
             <input
-              className="input pl-14 text-2xl font-bold"
+              className="bg-transparent border-0 outline-none text-2xl font-bold text-ptext w-full p-0 focus:ring-0 focus:outline-none"
               type="number"
               value={amount || ""}
               onChange={(e) => setAmount(Number(e.target.value))}

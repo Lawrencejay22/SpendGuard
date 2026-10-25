@@ -262,9 +262,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
             {/* Quick Search */}
             <div className="flex-1 max-w-md relative hidden md:block">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-stext" />
+              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stext pointer-events-none" />
               <input
-                className="input pl-9 py-2 text-sm"
+                className="input pl-10 py-2 text-sm"
+                style={{ paddingLeft: "2.5rem" }}
                 placeholder="Search transactions, recipients, policies…"
               />
             </div>

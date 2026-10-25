@@ -115,9 +115,10 @@ export default function TransactionsPage() {
       <div className="card p-5">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div className="md:col-span-2 relative">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-stext" />
+            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stext pointer-events-none" />
             <input
-              className="input pl-9"
+              className="input pl-10"
+              style={{ paddingLeft: "2.5rem" }}
               placeholder="Search by reference, recipient, purpose…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}

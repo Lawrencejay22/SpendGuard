@@ -145,6 +145,7 @@ export default function LoginPage() {
               <div className="relative">
                 <input
                   className="input pr-10"
+                  style={{ paddingRight: "2.75rem" }}
                   type={showPw ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

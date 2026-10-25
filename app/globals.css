@@ -248,6 +248,14 @@ a {
   font-family: inherit;
   transition: all 0.2s ease;
 }
+/* Ensure padding utilities override default input padding */
+.input.pl-9, input.input.pl-9 { padding-left: 2.25rem !important; }
+.input.pl-10, input.input.pl-10 { padding-left: 2.5rem !important; }
+.input.pl-12, input.input.pl-12 { padding-left: 3rem !important; }
+.input.pl-14, input.input.pl-14 { padding-left: 3.5rem !important; }
+.input.pl-16, input.input.pl-16 { padding-left: 4.5rem !important; }
+.input.pr-10, input.input.pr-10 { padding-right: 2.75rem !important; }
+
 .input:focus {
   outline: none;
   border-color: #5DE0B0;
