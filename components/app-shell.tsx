@@ -180,16 +180,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             >
               Moderator
             </button>
-            <button
-              type="button"
-              className={`flex-1 text-center ${role === "admin" ? "active" : ""}`}
-              onClick={() => {
-                setRole("admin");
-                router.push("/admin-overview");
-              }}
-            >
-              Admin
-            </button>
           </div>
         </div>
 
