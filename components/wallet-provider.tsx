@@ -13,6 +13,7 @@ type WalletContextValue = {
   connecting: boolean;
   error: string | null;
   connect: () => Promise<void>;
+  connectDemo: () => void;
   disconnect: () => Promise<void>;
 };
 
@@ -49,7 +50,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
               ? String((netRes as { network?: string }).network || "TESTNET").toUpperCase()
               : "TESTNET";
 
-          if (address && network.includes("TESTNET")) {
+          if (address) {
             setWallet({ connected: true, address, network });
           }
         } catch {
@@ -72,6 +73,15 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const connectDemo = useCallback(() => {
+    setWallet({
+      connected: true,
+      address: "GB3XPHAPMYBNFPQIUEG46SN5LCKHMSIT2NCICWCJJUSWISQU674GTSIU",
+      network: "TESTNET",
+    });
+    setError(null);
+  }, []);
+
   const disconnect = useCallback(async () => {
     const state = await disconnectFreighter();
     setWallet(state);
@@ -79,7 +89,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <WalletContext.Provider value={{ wallet, connecting, error, connect, disconnect }}>
+    <WalletContext.Provider value={{ wallet, connecting, error, connect, connectDemo, disconnect }}>
       {children}
     </WalletContext.Provider>
   );

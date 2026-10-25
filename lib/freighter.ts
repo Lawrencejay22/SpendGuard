@@ -85,11 +85,7 @@ export async function connectFreighter(): Promise<WalletState> {
     }
   }
 
-  // Verify testnet
-  if (!networkName.includes("TESTNET") && networkName !== "TESTNET") {
-    throw new Error(`Wrong network. Switch Freighter to "Testnet" (currently: ${networkName}).`);
-  }
-
+  // Note network (TESTNET or PUBLIC)
   return { connected: true, address, network: networkName };
 }
 

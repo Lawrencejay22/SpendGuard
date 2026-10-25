@@ -206,6 +206,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={true}
                 onClick={() => setSidebarOpen(false)}
                 className={`nav-item ${isActive ? "active" : ""}`}
               >
